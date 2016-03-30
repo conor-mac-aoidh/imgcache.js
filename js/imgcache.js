@@ -175,6 +175,8 @@ var ImgCache = {
 
     // Fix for #42 (Cordova versions < 4.0)
     Helpers.EntryToURL = function (entry) {
+      return entry.toURL();
+      /*
         if (Helpers.isCordovaAndroidOlderThan4() && typeof entry.toNativeURL === 'function') {
             return entry.toNativeURL();
         } else if (typeof entry.toInternalURL === 'function') {
@@ -182,7 +184,7 @@ var ImgCache = {
             return entry.toInternalURL();
         } else {
             return entry.toURL();
-        }
+        }*/
     };
 
     // Returns a URL that can be used to locate a file
@@ -572,7 +574,7 @@ var ImgCache = {
             ImgCache.overridables.log('LocalFileSystem opened', LOG_LEVEL_INFO);
 
             // store filesystem handle
-            ImgCache.attributes.filesystem = filesystem;
+            ImgCache.attributes.filesystem = filesystem.filesystem;
 
             Private.createCacheDir(function () {
                 _checkSize(ImgCache.attributes.init_callback);
@@ -582,9 +584,9 @@ var ImgCache = {
             ImgCache.overridables.log('Failed to initialise LocalFileSystem ' + error.code, LOG_LEVEL_ERROR);
             if (error_callback) { error_callback(); }
         };
-        if (Helpers.isCordova() && window.requestFileSystem) {
-            // PHONEGAP
-            window.requestFileSystem(Helpers.getCordovaStorageType(ImgCache.options.usePersistentCache), 0, _gotFS, _fail);
+        if (Helpers.isCordova() && window.resolveLocalFileSystemURL) {
+          // cordova
+          window.resolveLocalFileSystemURL(window.cordova.file.cacheDirectory, _gotFS, _fail);
         } else {
             //CHROME
             var savedFS = window.requestFileSystem || window.webkitRequestFileSystem;
