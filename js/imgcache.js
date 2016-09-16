@@ -574,7 +574,7 @@ var ImgCache = {
             ImgCache.overridables.log('LocalFileSystem opened', LOG_LEVEL_INFO);
 
             // store filesystem handle
-            ImgCache.attributes.filesystem = filesystem.filesystem;
+            ImgCache.attributes.filesystem = Helpers.isCordova() ? filesystem.filesystem : filesystem;
 
             Private.createCacheDir(function () {
                 _checkSize(ImgCache.attributes.init_callback);
